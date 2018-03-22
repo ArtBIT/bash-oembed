@@ -1,0 +1,83 @@
+#!/bin/bash
+
+usage () {
+    cat <<HELP_USAGE
+Usage: $0 [options...] <url>
+Options:
+     --help					Show this screen.
+ -f, --format <json|xml>	Specify the response filetype.
+ -w, --maxwidth <number>	Specify the maximum width available for the conent.
+ -h, --maxheight <number>	Specify the maximum width available for the conent.
+HELP_USAGE
+}
+
+# Determine the path where this script resides in
+script_name=$0
+script_full_path=$(dirname "$script_name")
+
+# Initialize parameter default values
+format="json"
+
+# getopts? anyone? no...
+while true; do
+  case "$1" in
+    --help)
+        usage
+        exit 0
+        ;;
+    -f | --format)
+        format=$2
+        shift 2
+        ;;
+    -w | --maxwidth )
+        maxwidth=$2; 
+        shift 2
+        ;;
+    -h | --maxheight )
+        maxheight=$2; 
+        shift 2
+        ;;
+    -- ) 
+        shift
+        break
+        ;;
+    -* ) 
+        echo "Invalid option: -$1" >&2
+        break 
+        ;;
+    * ) 
+        url=$1
+        shift
+        break 
+        ;;
+  esac
+done
+
+# Loop through the provider config files in the providers subdirectory
+# source them, test if the provided url matches the providers url regex,
+# if so, break out of the loop.
+provider=
+endpoint=
+for provider_name in ./providers/*; do
+    source "$provider_name"
+    if [[ "$url" =~ $provider_url_regex ]]; then
+        provider=$provider_name
+        endpoint=$provider_endpoint
+        break;
+    fi
+done
+
+if [ -z "$endpoint" ]; then
+    >&2 echo "Could not find an oEmbed provider for the supplied URL." 
+    exit 1
+fi
+
+response=$(curl --get \
+    --data-urlencode "url=$url" \
+    --data-urlencode "format=$format" \
+    --data-urlencode "maxwidth=$maxwidth" \
+    --data-urlencode "maxheight=$maxheight" \
+    $endpoint \
+    2>/dev/null)
+
+echo $response
