@@ -18,6 +18,9 @@ script_full_path=$(dirname "$script_name")
 # Initialize parameter default values
 format="json"
 
+declare -A request_params
+request_params=([format]=$format)
+
 # getopts? anyone? no...
 while true; do
   case "$1" in
@@ -27,14 +30,15 @@ while true; do
         ;;
     -f | --format)
         format=$2
+        request_params[format]=$2
         shift 2
         ;;
     -w | --maxwidth )
-        maxwidth=$2; 
+        request_params[maxwidth]=$2
         shift 2
         ;;
     -h | --maxheight )
-        maxheight=$2; 
+        request_params[maxheight]=$2
         shift 2
         ;;
     -- ) 
@@ -46,6 +50,7 @@ while true; do
         break 
         ;;
     * ) 
+        request_params[url]=$1
         url=$1
         shift
         break 
@@ -58,7 +63,9 @@ done
 # if so, break out of the loop.
 provider=
 endpoint=
+declare -A provider_params
 for provider_name in ./providers/*; do
+    provider_specific_params=()
     source "$provider_name"
     if [[ "$url" =~ $provider_url_regex ]]; then
         provider=$provider_name
@@ -72,12 +79,18 @@ if [ -z "$endpoint" ]; then
     exit 1
 fi
 
-response=$(curl --get \
-    --data-urlencode "url=$url" \
-    --data-urlencode "format=$format" \
-    --data-urlencode "maxwidth=$maxwidth" \
-    --data-urlencode "maxheight=$maxheight" \
-    $endpoint \
-    2>/dev/null)
+# If there are provider specific parameters add them to the list of request parameters
+if [ ! -z "${!provider_params[@]}" ]; then
+    for param in "${!provider_params[@]}"; do
+        request_params[$param]=${provider_params[$param]}
+    done
+fi
 
-echo $response
+# flatten the request_params array into string
+request_string=""
+for param in "${!request_params[@]}"
+do
+    request_string="$request_string --data-urlencode \"$param=${request_params[$param]}\""
+done
+
+eval curl $request_string --get $endpoint
