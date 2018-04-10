@@ -64,8 +64,8 @@ done
 provider=
 endpoint=
 declare -A provider_params
-for provider_name in ./providers/*; do
-    provider_specific_params=()
+for provider_name in $script_full_path/providers/*; do
+    provider_params=()
     source "$provider_name"
     if [[ "$url" =~ $provider_url_regex ]]; then
         provider=$provider_name
