@@ -1,5 +1,5 @@
 # Bash oEmbed Consumer
-[![GitHub license](https://img.shields.io/github/license/ArtBIT/bash-oembed.svg)](https://github.com/ArtBIT/bash-oembed) [![GitHub stars](https://img.shields.io/github/stars/ArtBIT/bash-oembed.svg)](https://github.com/ArtBIT/bash-oembed)  [![awesomeness](https://img.shields.io/badge/awesomeness-maximum-red.svg)](https://github.com/ArtBIT/bash-oembed)
+[![Build Status](https://travis-ci.org/ArtBIT/bash-oembed.svg)](https://travis-ci.org/ArtBIT/bash-oembed) [![GitHub license](https://img.shields.io/github/license/ArtBIT/bash-oembed.svg)](https://github.com/ArtBIT/bash-oembed) [![GitHub stars](https://img.shields.io/github/stars/ArtBIT/bash-oembed.svg)](https://github.com/ArtBIT/bash-oembed)  [![awesomeness](https://img.shields.io/badge/awesomeness-maximum-red.svg)](https://github.com/ArtBIT/bash-oembed)
 
 This is a small bash script that tries to determine the correct oEmbed provider depending on the given URL, and then makes a cURL request to their endpoint and returns the response.
 
