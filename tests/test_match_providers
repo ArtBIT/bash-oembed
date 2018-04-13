@@ -1,0 +1,21 @@
+# vim: set ft=bash
+
+SCRIPT_DIR=$( cd "$( dirname "$(readlink -f "${BASH_SOURCE[0]}")" )" && pwd )
+source "$SCRIPT_DIR/../oembed"
+
+function test_match_provider() {
+    [ "$(match_provider "http://fav.me/d31w0t6")" = "deviantart" ] &&
+    [ "$(match_provider "https://artbit.deviantart.com/art/trianguLIZAm-316865270")" = "deviantart" ] &&
+    [ "$(match_provider "https://www.deviantart.com/art/Trio-730094937")" = "deviantart" ] &&
+    [ "$(match_provider "https://codepen.io/ArtBIT/pen/BwKorN")" = "codepen" ] &&
+    [ "$(match_provider "https://flic.kr/p/fKiYqR")" = "flickr" ] &&
+    [ "$(match_provider "http://www.flickr.com/photos/bees/2341623661/")" = "flickr" ] &&
+    [ "$(match_provider "https://twitter.com/davortomic/status/973911978015109121")" = "twitter" ] &&
+    [ "$(match_provider "https://vimeo.com/10714985")" = "vimeo" ] &&
+    [ "$(match_provider "https://www.instagram.com/p/BfoNIqGHulw/")" = "instagram" ] &&
+    [ "$(match_provider "https://www.instagram.com/p/bNd86MSFv6/")" = "instagram" ] &&
+    [ "$(match_provider "https://www.youtube.com/watch?v=dR1FCJS8DoM")" = "youtube" ] &&
+    [ "$(match_provider "https://youtu.be/dQw4w9WgXcQ")" = "youtube" ] &&
+    return 0 || return 1
+}
+
